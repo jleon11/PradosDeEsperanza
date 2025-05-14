@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TestimoniosWidget extends StatefulWidget {
+  final bool isMobile;
+  const TestimoniosWidget({required this.isMobile, super.key});
+
   @override
   _TestimoniosWidgetState createState() => _TestimoniosWidgetState();
 }
@@ -48,12 +51,16 @@ class _TestimoniosWidgetState extends State<TestimoniosWidget> {
     },
   ];
 
-  int get totalPages => (testimonios.length / 3).ceil();
+  int get totalPages {
+    final testimoniosPorPagina = widget.isMobile ? 1 : 3;
+    return (testimonios.length / testimoniosPorPagina).ceil();
+  }
 
-  List<Widget> _buildPage(int pageIndex) {
-    final start = pageIndex * 3;
-    final end =
-        (start + 3) <= testimonios.length ? start + 3 : testimonios.length;
+  List<Widget> _buildPage(int pageIndex, int testimoniosPorPagina) {
+    final start = pageIndex * testimoniosPorPagina;
+    final end = (start + testimoniosPorPagina <= testimonios.length)
+        ? start + testimoniosPorPagina
+        : testimonios.length;
     final items = testimonios.sublist(start, end);
 
     return items.map((testimonio) {
@@ -80,7 +87,9 @@ class _TestimoniosWidgetState extends State<TestimoniosWidget> {
               Text(
                 testimonio['autor']!,
                 style: const TextStyle(
-                    color: Colors.white70, fontWeight: FontWeight.w500),
+                  color: Colors.white70,
+                  fontWeight: FontWeight.w500,
+                ),
               )
             ],
           ),
@@ -92,14 +101,14 @@ class _TestimoniosWidgetState extends State<TestimoniosWidget> {
   void _previousPage() {
     if (_currentIndex > 0) {
       _controller.previousPage(
-          duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     }
   }
 
   void _nextPage() {
     if (_currentIndex < totalPages - 1) {
       _controller.nextPage(
-          duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
     }
   }
 
@@ -131,13 +140,16 @@ class _TestimoniosWidgetState extends State<TestimoniosWidget> {
               onPageChanged: (index) => setState(() => _currentIndex = index),
               itemCount: totalPages,
               itemBuilder: (_, pageIndex) {
-                return Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: _buildPage(pageIndex),
-                );
+                final testimoniosPorPagina = widget.isMobile ? 1 : 3;
+                final items = _buildPage(pageIndex, testimoniosPorPagina);
+
+                return widget.isMobile
+                    ? Column(children: items)
+                    : Row(children: items);
               },
             ),
           ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
@@ -147,11 +159,14 @@ class _TestimoniosWidgetState extends State<TestimoniosWidget> {
                 width: 8,
                 height: 8,
                 decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: _currentIndex == index ? Colors.white : Colors.grey),
+                  shape: BoxShape.circle,
+                  color:
+                      _currentIndex == index ? Colors.white : Colors.grey[600],
+                ),
               ),
             ),
           ),
+          const SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
