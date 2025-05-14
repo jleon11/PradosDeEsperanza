@@ -31,7 +31,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   String _hoveredItem = '';
   String _clickedItem = '';  // Para el ítem clickeado
-
+  //Prueba
   final Color azulCelesteDefault = const Color(0xFF002F87);
 
   final List<String> ImagenesParaElSlider = [
