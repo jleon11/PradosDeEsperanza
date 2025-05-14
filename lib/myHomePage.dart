@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'Titulo del material App',
+      title: 'Practica Flutter',
       debugShowCheckedModeBanner: false,
       home: MyHomePage(),
     );
